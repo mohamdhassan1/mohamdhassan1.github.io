@@ -146,7 +146,7 @@ export const featuredProjects: Project[] = [
   {
     slug: 'potter-library',
     name: 'Potter Library',
-    tagline: 'A books, characters, houses and spells browser on a live public API',
+    tagline: 'Books, characters, houses and spells, browsed over a live public API',
     category: 'Entertainment',
     period: '2026',
     role: 'Sole developer',
