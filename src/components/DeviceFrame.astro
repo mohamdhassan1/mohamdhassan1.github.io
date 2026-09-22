@@ -1,0 +1,69 @@
+---
+/**
+ * A phone bezel around a real screenshot. Purely presentational chrome — the
+ * image inside is always an actual capture of the app running.
+ */
+interface Props {
+  src: string;
+  alt: string;
+  /** Skip lazy-loading for frames that are above the fold. */
+  eager?: boolean;
+  class?: string;
+}
+
+const { src, alt, eager = false, class: className = '' } = Astro.props;
+---
+
+<div class={`device ${className}`}>
+  <div class="device__bezel">
+    <span class="device__notch" aria-hidden="true"></span>
+    <img
+      class="device__screen"
+      src={src}
+      alt={alt}
+      width="320"
+      height="693"
+      loading={eager ? 'eager' : 'lazy'}
+      decoding="async"
+      fetchpriority={eager ? 'high' : 'auto'}
+    />
+  </div>
+</div>
+
+<style>
+  .device {
+    position: relative;
+    width: 100%;
+  }
+
+  .device__bezel {
+    position: relative;
+    padding: 8px;
+    border-radius: 34px;
+    background: linear-gradient(160deg, #2b3138, #14171b 46%, #22272d);
+    border: 1px solid var(--border-strong);
+    box-shadow:
+      var(--shadow-lg),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  }
+
+  .device__notch {
+    position: absolute;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 32%;
+    height: 6px;
+    border-radius: var(--radius-full);
+    background: #0a0c0e;
+    z-index: 2;
+  }
+
+  .device__screen {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 27px;
+    background: var(--surface-2);
+  }
+</style>

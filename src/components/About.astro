@@ -1,0 +1,109 @@
+---
+import { about } from '../data/site';
+---
+
+<section class="section" id="about">
+  <div class="container about">
+    <div class="about__intro reveal">
+      <p class="eyebrow">About</p>
+      <h2 class="section-title">Mobile apps, wired to something real.</h2>
+    </div>
+
+    <div class="about__body">
+      <div class="about__text">
+        {about.paragraphs.map((p, i) => <p class="reveal" style={`--reveal-delay:${i * 90}ms`}>{p}</p>)}
+      </div>
+
+      <ul class="about__facts">
+        {
+          about.facts.map((fact, i) => (
+            <li class="about__fact reveal" style={`--reveal-delay:${i * 80}ms`}>
+              <span class="about__value">{fact.value}</span>
+              <span class="about__label">{fact.label}</span>
+              <span class="about__detail">{fact.detail}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about__intro {
+    max-width: 40ch;
+  }
+
+  .about__body {
+    display: grid;
+    gap: clamp(2.5rem, 5vw, 4rem);
+    margin-top: var(--space-8);
+  }
+
+  .about__text {
+    display: grid;
+    gap: var(--space-5);
+    max-width: 68ch;
+    color: var(--text-muted);
+    font-size: var(--text-lg);
+    line-height: var(--leading-relaxed);
+  }
+
+  .about__text :global(strong) {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .about__facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  .about__fact {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding: var(--space-5);
+    background: var(--surface-1);
+  }
+
+  .about__value {
+    font-family: var(--font-display);
+    font-size: var(--text-3xl);
+    font-weight: 700;
+    letter-spacing: var(--tracking-tighter);
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .about__label {
+    margin-top: var(--space-2);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .about__detail {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--text-subtle);
+  }
+
+  @media (min-width: 900px) {
+    .about__body {
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+      align-items: start;
+    }
+
+    .about__facts {
+      grid-template-columns: 1fr 1fr;
+      position: sticky;
+      top: calc(var(--header-h) + var(--space-6));
+    }
+  }
+</style>

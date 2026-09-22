@@ -1,0 +1,101 @@
+---
+// Sora is only ever used for headings, which are 600 or 700 — loading the
+// other weights (or non-latin subsets) would ship bytes nothing renders.
+import '@fontsource-variable/inter';
+import '@fontsource/sora/latin-600.css';
+import '@fontsource/sora/latin-700.css';
+import '@fontsource-variable/jetbrains-mono';
+import '../styles/global.css';
+import { site, education, languages } from '../data/site';
+
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+
+// Structured data. Every field here is on the CV or the public profiles —
+// nothing about the person is inferred.
+const personSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: site.fullName,
+  alternateName: site.name,
+  jobTitle: 'Flutter Developer | Mobile Application Developer',
+  email: `mailto:${site.contact.email}`,
+  url: canonical,
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Cairo',
+    addressCountry: 'EG',
+  },
+  alumniOf: {
+    '@type': 'CollegeOrUniversity',
+    name: education.institution,
+  },
+  knowsLanguage: languages.map((l) => l.name),
+  knowsAbout: ['Flutter', 'Dart', 'Mobile Application Development', 'Clean Architecture', 'BLoC', 'REST API Integration'],
+  sameAs: [site.contact.github, site.contact.linkedin],
+};
+---
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{site.seo.title}</title>
+    <meta name="description" content={site.seo.description} />
+    <meta name="author" content={site.fullName} />
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content="#0a0c0e" />
+
+    <meta property="og:type" content="profile" />
+    <meta property="og:title" content={site.seo.title} />
+    <meta property="og:description" content={site.seo.description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content="en_US" />
+    <meta property="profile:first_name" content="Mohamed" />
+    <meta property="profile:last_name" content="Hassan" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={site.seo.title} />
+    <meta name="twitter:description" content={site.seo.description} />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
+
+    {/* Swap the no-js class before first paint so reveal elements are hidden
+        only when JS is actually there to reveal them again. */}
+    <script is:inline>
+      document.documentElement.classList.remove('no-js');
+    </script>
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <slot />
+
+    <script>
+      // Scroll reveal. Anything still off-screen when the observer cannot run
+      // stays visible, because .reveal only hides once this script is present.
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const targets = document.querySelectorAll<HTMLElement>('.reveal');
+
+      if (reduced.matches || !('IntersectionObserver' in window)) {
+        targets.forEach((el) => el.classList.add('is-visible'));
+      } else {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              entry.target.classList.add('is-visible');
+              observer.unobserve(entry.target);
+            }
+          },
+          { rootMargin: '0px 0px -8% 0px', threshold: 0.08 },
+        );
+        targets.forEach((el) => observer.observe(el));
+      }
+    </script>
+  </body>
+</html>

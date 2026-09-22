@@ -1,0 +1,248 @@
+---
+import { experience, education, languages } from '../data/site';
+---
+
+<section class="section experience" id="experience">
+  <div class="container">
+    <div class="experience__head reveal">
+      <p class="eyebrow">Experience</p>
+      <h2 class="section-title">Where the work has happened.</h2>
+    </div>
+
+    <div class="experience__layout">
+      <ol class="timeline">
+        {
+          experience.map((job, i) => (
+            <li class="timeline__item reveal" style={`--reveal-delay:${i * 110}ms`}>
+              <span class:list={['timeline__dot', job.current && 'timeline__dot--current']} aria-hidden="true" />
+              <div class="timeline__content">
+                <p class="timeline__period">
+                  {job.period}
+                  {job.current && <span class="timeline__now">Current</span>}
+                </p>
+                <h3 class="timeline__role">{job.role}</h3>
+                <p class="timeline__location">{job.location}</p>
+                <ul class="timeline__points">
+                  {job.points.map((point) => (
+                    <li>{point}</li>
+                  ))}
+                </ul>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+
+      <aside class="side">
+        <div class="card side__card reveal">
+          <h3 class="side__title">Education</h3>
+          <p class="side__degree">{education.degree}</p>
+          <p class="side__institution">{education.institution}</p>
+          <p class="side__meta">{education.location}</p>
+          <div class="side__row">
+            <span class="badge">{education.graduated}</span>
+            <span class="badge badge--accent">{education.grade}</span>
+          </div>
+        </div>
+
+        <div class="card side__card reveal" style="--reveal-delay:90ms">
+          <h3 class="side__title">Languages</h3>
+          <ul class="side__languages">
+            {
+              languages.map((lang) => (
+                <li>
+                  <span class="side__lang-name">{lang.name}</span>
+                  <span class="side__lang-level">{lang.level}</span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<style>
+  .experience__head {
+    max-width: 48ch;
+  }
+
+  .experience__layout {
+    display: grid;
+    gap: clamp(2.5rem, 5vw, 4rem);
+    margin-top: var(--space-8);
+  }
+
+  /* Timeline */
+  .timeline {
+    display: grid;
+    gap: var(--space-8);
+    position: relative;
+    padding-inline-start: var(--space-6);
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    inset-block: 6px 0;
+    inset-inline-start: 5px;
+    width: 1px;
+    background: linear-gradient(180deg, var(--border-accent), var(--border) 45%, transparent);
+  }
+
+  .timeline__item {
+    position: relative;
+  }
+
+  .timeline__dot {
+    position: absolute;
+    inset-inline-start: calc(var(--space-6) * -1);
+    top: 7px;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: var(--surface-3);
+    border: 2px solid var(--bg);
+    box-shadow: 0 0 0 1px var(--border-strong);
+  }
+
+  .timeline__dot--current {
+    background: var(--accent);
+    box-shadow:
+      0 0 0 1px var(--border-accent),
+      0 0 0 5px rgba(127, 166, 255, 0.14);
+  }
+
+  .timeline__period {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--text-subtle);
+  }
+
+  .timeline__now {
+    padding: 0.15rem 0.55rem;
+    border: 1px solid var(--border-accent);
+    border-radius: var(--radius-full);
+    background: var(--accent-wash);
+    color: var(--accent-bright);
+  }
+
+  .timeline__role {
+    margin-top: var(--space-2);
+    font-size: var(--text-xl);
+  }
+
+  .timeline__location {
+    margin-top: var(--space-1);
+    font-size: var(--text-sm);
+    color: var(--text-subtle);
+  }
+
+  .timeline__points {
+    display: grid;
+    gap: var(--space-3);
+    margin-top: var(--space-4);
+  }
+
+  .timeline__points li {
+    position: relative;
+    padding-inline-start: var(--space-5);
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    line-height: var(--leading-normal);
+  }
+
+  .timeline__points li::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0;
+    top: 0.62em;
+    width: 6px;
+    height: 1px;
+    background: var(--accent);
+    opacity: 0.7;
+  }
+
+  /* Side cards */
+  .side {
+    display: grid;
+    gap: var(--space-4);
+    align-content: start;
+  }
+
+  .side__card {
+    padding: var(--space-6);
+  }
+
+  .side__title {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: 400;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .side__degree {
+    margin-top: var(--space-4);
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    font-weight: 600;
+  }
+
+  .side__institution {
+    margin-top: var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+  }
+
+  .side__meta {
+    font-size: var(--text-sm);
+    color: var(--text-subtle);
+  }
+
+  .side__row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-4);
+  }
+
+  .side__languages {
+    display: grid;
+    gap: var(--space-4);
+    margin-top: var(--space-4);
+  }
+
+  .side__languages li {
+    display: grid;
+    gap: var(--space-1);
+  }
+
+  .side__lang-name {
+    font-size: var(--text-base);
+    font-weight: 600;
+  }
+
+  .side__lang-level {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+  }
+
+  @media (min-width: 940px) {
+    .experience__layout {
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.6fr);
+      align-items: start;
+    }
+
+    .side {
+      position: sticky;
+      top: calc(var(--header-h) + var(--space-6));
+    }
+  }
+</style>

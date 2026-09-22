@@ -1,0 +1,173 @@
+---
+import { featuredProjects, moreProjects } from '../data/projects';
+import { site } from '../data/site';
+import ProjectShowcase from './ProjectShowcase.astro';
+import Icon from './Icon.astro';
+---
+
+<section class="section projects" id="projects">
+  <div class="container">
+    <div class="projects__head reveal">
+      <p class="eyebrow">Featured projects</p>
+      <h2 class="section-title">Five apps, and the code behind them.</h2>
+      <p class="section-lede">
+        Every screenshot below was taken from the app running from its own source — the Potter Library and
+        CineVerse screens are showing live API data. Where an app could not be run, it says so rather than
+        showing a mockup.
+      </p>
+    </div>
+
+    <div class="projects__list">
+      {featuredProjects.map((project, i) => <ProjectShowcase project={project} index={i} />)}
+    </div>
+  </div>
+</section>
+
+<section class="section more">
+  <div class="container">
+    <div class="more__head reveal">
+      <p class="eyebrow">More projects</p>
+      <h2 class="section-title">Smaller builds.</h2>
+    </div>
+
+    <ul class="more__grid">
+      {
+        moreProjects.map((project, i) => (
+          <li class="card more__card reveal" style={`--reveal-delay:${i * 90}ms`}>
+            <div class="more__card-top">
+              <span class="badge badge--accent">{project.category}</span>
+              <span class="more__period">{project.period}</span>
+            </div>
+            <h3 class="more__title">{project.name}</h3>
+            <p class="more__tagline">{project.tagline}</p>
+            <p class="more__body">{project.solution}</p>
+            <ul class="badge-list more__stack">
+              {project.stack.map((tech) => (
+                <li class="badge">{tech}</li>
+              ))}
+            </ul>
+            {project.repo && (
+              <a class="more__link" href={project.repo} target="_blank" rel="noopener noreferrer">
+                <Icon name="github" size={15} />
+                View source
+                <Icon name="arrow-up-right" size={14} />
+              </a>
+            )}
+          </li>
+        ))
+      }
+
+      <li class="card more__card more__card--cta reveal" style="--reveal-delay:90ms">
+        <Icon name="github" size={26} class="more__cta-icon" />
+        <h3 class="more__title">Everything else is on GitHub</h3>
+        <p class="more__body">
+          Six public repositories — the Flutter apps above plus the Laravel backend for FoodLens. Commit
+          history, architecture and all.
+        </p>
+        <a
+          class="btn btn--ghost more__cta-btn"
+          href={site.contact.github}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Icon name="github" class="btn__icon" />
+          View GitHub
+          <Icon name="arrow-up-right" class="btn__icon" />
+        </a>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<style>
+  .projects__head,
+  .more__head {
+    max-width: 58ch;
+  }
+
+  .projects__list {
+    margin-top: var(--space-6);
+  }
+
+  .more {
+    padding-top: 0;
+  }
+
+  .more__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+    gap: var(--space-4);
+    margin-top: var(--space-8);
+  }
+
+  .more__card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-6);
+  }
+
+  .more__card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+
+  .more__period {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--text-subtle);
+  }
+
+  .more__title {
+    font-size: var(--text-xl);
+  }
+
+  .more__tagline {
+    color: var(--accent);
+    font-size: var(--text-sm);
+  }
+
+  .more__body {
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+    line-height: var(--leading-normal);
+  }
+
+  .more__stack {
+    margin-top: auto;
+    padding-top: var(--space-3);
+  }
+
+  .more__link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-top: var(--space-3);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--text-muted);
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+
+  .more__link:hover {
+    color: var(--accent-bright);
+  }
+
+  .more__card--cta {
+    align-items: flex-start;
+    justify-content: center;
+    background:
+      radial-gradient(ellipse 80% 70% at 0% 0%, rgba(127, 166, 255, 0.09), transparent 66%),
+      linear-gradient(180deg, var(--surface-1), var(--surface-2));
+  }
+
+  :global(.more__cta-icon) {
+    color: var(--accent);
+  }
+
+  .more__cta-btn {
+    margin-top: var(--space-3);
+  }
+</style>

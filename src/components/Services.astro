@@ -1,0 +1,165 @@
+---
+import { services, process } from '../data/site';
+---
+
+<section class="section services">
+  <div class="container">
+    <div class="services__head reveal">
+      <p class="eyebrow">What I can build</p>
+      <h2 class="section-title">If you need an app, this is what I can take on.</h2>
+      <p class="section-lede">
+        Each one is tagged with the project where I have already built it, so you can check the claim
+        before you hire me for it.
+      </p>
+    </div>
+
+    <ul class="services__grid">
+      {
+        services.map((service, i) => (
+          <li class="card service reveal" style={`--reveal-delay:${(i % 4) * 70}ms`}>
+            <h3 class="service__title">{service.title}</h3>
+            <p class="service__body">{service.body}</p>
+            <p class="service__backed">
+              <span class="service__backed-label">Built in</span>
+              {service.backedBy}
+            </p>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<section class="section process">
+  <div class="container">
+    <div class="process__head reveal">
+      <p class="eyebrow">How I build</p>
+      <h2 class="section-title">The same seven steps, every project.</h2>
+    </div>
+
+    <ol class="process__list">
+      {
+        process.map((step, i) => (
+          <li class="process__step reveal" style={`--reveal-delay:${(i % 4) * 70}ms`}>
+            <span class="process__n">{step.n}</span>
+            <h3 class="process__title">{step.title}</h3>
+            <p class="process__body">{step.body}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .services__head,
+  .process__head {
+    max-width: 56ch;
+  }
+
+  .services__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 268px), 1fr));
+    gap: var(--space-4);
+    margin-top: var(--space-8);
+  }
+
+  .service {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-5);
+    overflow: hidden;
+  }
+
+  /* A hairline that sweeps in on hover — the only motion these cards get. */
+  .service::before {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    inset-block-start: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    transform: scaleX(0);
+    transition: transform var(--duration) var(--ease-out);
+  }
+
+  .service:hover::before {
+    transform: scaleX(1);
+  }
+
+  .service__title {
+    font-size: var(--text-lg);
+  }
+
+  .service__body {
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+    line-height: var(--leading-normal);
+  }
+
+  .service__backed {
+    margin-top: auto;
+    padding-top: var(--space-4);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--accent);
+  }
+
+  .service__backed-label {
+    display: block;
+    color: var(--text-subtle);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+  }
+
+  /* Process */
+  .process {
+    padding-top: 0;
+  }
+
+  /* Seven steps never divide evenly into the column count, so each step
+     carries its own border rather than relying on grid-gap lines — that way
+     the leftover slot is simply empty instead of a stray coloured block. */
+  .process__list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 244px), 1fr));
+    gap: var(--space-3);
+    margin-top: var(--space-8);
+  }
+
+  .process__step {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-5);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--surface-1);
+    transition:
+      background var(--duration) var(--ease-out),
+      border-color var(--duration) var(--ease-out);
+  }
+
+  .process__step:hover {
+    background: var(--surface-2);
+    border-color: var(--border-strong);
+  }
+
+  .process__n {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--accent);
+    letter-spacing: var(--tracking-wide);
+  }
+
+  .process__title {
+    font-size: var(--text-lg);
+  }
+
+  .process__body {
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+    line-height: var(--leading-normal);
+  }
+</style>

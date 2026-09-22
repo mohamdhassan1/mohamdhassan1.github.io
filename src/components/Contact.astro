@@ -1,0 +1,173 @@
+---
+import { site } from '../data/site';
+import Icon from './Icon.astro';
+
+const channels = [
+  {
+    label: 'Email',
+    value: site.contact.email,
+    href: `mailto:${site.contact.email}`,
+    icon: 'mail' as const,
+    external: false,
+  },
+  {
+    label: 'GitHub',
+    value: site.contact.githubHandle,
+    href: site.contact.github,
+    icon: 'github' as const,
+    external: true,
+  },
+  {
+    label: 'LinkedIn',
+    value: site.contact.linkedinHandle,
+    href: site.contact.linkedin,
+    icon: 'linkedin' as const,
+    external: true,
+  },
+];
+---
+
+<section class="section contact" id="contact">
+  <div class="glow contact__glow" aria-hidden="true"></div>
+
+  <div class="container contact__inner">
+    <div class="contact__head reveal">
+      <p class="eyebrow">Contact</p>
+      <h2 class="contact__title">Have a project in mind? Let&rsquo;s build it.</h2>
+      <p class="section-lede">
+        Whether you are hiring a Flutter developer or need an app built end to end, send me the idea and
+        I&rsquo;ll tell you honestly what it takes.
+      </p>
+
+      <div class="contact__actions">
+        <a class="btn btn--primary" href={`mailto:${site.contact.email}`}>
+          <Icon name="mail" class="btn__icon" />
+          Send me an email
+        </a>
+        <a class="btn btn--ghost" href={site.cv.href} download={site.cv.filename}>
+          <Icon name="download" class="btn__icon" />
+          Download CV
+        </a>
+      </div>
+    </div>
+
+    <ul class="contact__channels">
+      {
+        channels.map((channel, i) => (
+          <li class="reveal" style={`--reveal-delay:${i * 90}ms`}>
+            <a
+              class="card channel"
+              href={channel.href}
+              target={channel.external ? '_blank' : undefined}
+              rel={channel.external ? 'noopener noreferrer' : undefined}
+            >
+              <Icon name={channel.icon} size={20} class="channel__icon" />
+              <span class="channel__text">
+                <span class="channel__label">{channel.label}</span>
+                <span class="channel__value">{channel.value}</span>
+              </span>
+              <Icon name="arrow-up-right" size={16} class="channel__arrow" />
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .contact {
+    position: relative;
+    overflow: hidden;
+    border-top: 1px solid var(--border);
+  }
+
+  .contact__glow {
+    top: -40%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(56rem, 110vw);
+    aspect-ratio: 1;
+    background: radial-gradient(circle, rgba(127, 166, 255, 0.13), transparent 65%);
+  }
+
+  .contact__inner {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .contact__head {
+    max-width: 60ch;
+  }
+
+  .contact__title {
+    margin-top: var(--space-4);
+    font-size: var(--text-4xl);
+    letter-spacing: var(--tracking-tighter);
+  }
+
+  .contact__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-7);
+  }
+
+  .contact__channels {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+    gap: var(--space-4);
+  }
+
+  .channel {
+    display: flex;
+    /* Top-aligned so the labels line up across cards even when a long email
+       address wraps onto a second line. */
+    align-items: flex-start;
+    gap: var(--space-4);
+    padding: var(--space-5);
+    height: 100%;
+  }
+
+  :global(.channel__icon) {
+    flex: none;
+    color: var(--accent);
+  }
+
+  .channel__text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .channel__label {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-subtle);
+  }
+
+  .channel__value {
+    font-size: var(--text-sm);
+    color: var(--text);
+    overflow-wrap: anywhere;
+  }
+
+  :global(.channel__arrow) {
+    flex: none;
+    margin-inline-start: auto;
+    color: var(--text-subtle);
+    transition:
+      transform var(--duration) var(--ease-out),
+      color var(--duration) var(--ease-out);
+  }
+
+  .channel:hover :global(.channel__arrow) {
+    transform: translate(2px, -2px);
+    color: var(--accent);
+  }
+</style>

@@ -1,0 +1,415 @@
+---
+import { site } from '../data/site';
+import Icon from './Icon.astro';
+import DeviceFrame from './DeviceFrame.astro';
+
+// The layer labels mirror the actual folder structure of the VCare repository.
+const layers = [
+  { name: 'presentation', detail: 'screens · widgets' },
+  { name: 'logic', detail: '12 blocs' },
+  { name: 'data', detail: 'repositories · models' },
+  { name: 'core', detail: 'api · theme · l10n' },
+];
+---
+
+<section class="hero" id="top">
+  <div class="glow hero__glow hero__glow--a" aria-hidden="true"></div>
+  <div class="glow hero__glow hero__glow--b" aria-hidden="true"></div>
+  <div class="hero__grid-lines" aria-hidden="true"></div>
+
+  <div class="container hero__inner">
+    <div class="hero__copy">
+      <p class="hero__status">
+        <span class="hero__dot" aria-hidden="true"></span>
+        Available for freelance & full-time roles
+      </p>
+
+      <h1 class="hero__title">
+        <span class="hero__name">{site.name}</span>
+        <span class="hero__headline">{site.hero.headline}</span>
+      </h1>
+
+      <p class="hero__role">{site.title}</p>
+      <p class="hero__lede">{site.hero.lede}</p>
+
+      <div class="hero__actions">
+        <a class="btn btn--primary" href="#projects">
+          View my work
+          <Icon name="arrow-right" class="btn__icon" />
+        </a>
+        <a class="btn btn--ghost" href={site.cv.href} download={site.cv.filename}>
+          <Icon name="download" class="btn__icon" />
+          Download CV
+        </a>
+        <a class="btn btn--ghost" href="#contact">Let&rsquo;s work together</a>
+      </div>
+
+      <ul class="hero__links">
+        <li>
+          <a href={site.contact.github} target="_blank" rel="noopener noreferrer">
+            <Icon name="github" size={17} />
+            <span>GitHub</span>
+          </a>
+        </li>
+        <li>
+          <a href={site.contact.linkedin} target="_blank" rel="noopener noreferrer">
+            <Icon name="linkedin" size={17} />
+            <span>LinkedIn</span>
+          </a>
+        </li>
+        <li>
+          <a href={`mailto:${site.contact.email}`}>
+            <Icon name="mail" size={17} />
+            <span>Email</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="hero__visual">
+      <div class="hero__devices">
+        <DeviceFrame
+          class="hero__device hero__device--back"
+          src="/projects/library-home.webp"
+          alt="Potter Library home screen running on live API data, showing character avatars and book covers"
+          eager
+        />
+        <DeviceFrame
+          class="hero__device hero__device--front"
+          src="/projects/vcare-signin.webp"
+          alt="VCare sign-in screen in dark mode"
+          eager
+        />
+      </div>
+
+      <div class="hero__stack" aria-label="Clean Architecture layers used in VCare">
+        <p class="hero__stack-title">
+          <Icon name="layers" size={14} />
+          Clean Architecture
+        </p>
+        <ul>
+          {
+            layers.map((layer) => (
+              <li>
+                <span class="hero__layer-name">{layer.name}</span>
+                <span class="hero__layer-detail">{layer.detail}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    padding-block: calc(var(--header-h) + clamp(3rem, 7vw, 6rem)) clamp(4rem, 8vw, 7rem);
+    overflow: hidden;
+  }
+
+  .hero__glow {
+    z-index: 0;
+  }
+
+  .hero__glow--a {
+    top: -12%;
+    right: -6%;
+    width: min(46rem, 78vw);
+    aspect-ratio: 1;
+    background: radial-gradient(circle, rgba(127, 166, 255, 0.16), transparent 68%);
+  }
+
+  .hero__glow--b {
+    bottom: -28%;
+    left: -14%;
+    width: min(38rem, 70vw);
+    aspect-ratio: 1;
+    background: radial-gradient(circle, rgba(77, 124, 230, 0.12), transparent 70%);
+  }
+
+  /* Faint technical grid — texture, not decoration you actively notice. */
+  .hero__grid-lines {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background-image:
+      linear-gradient(to right, rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, #000 30%, transparent 78%);
+  }
+
+  .hero__inner {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: clamp(3rem, 6vw, 4.5rem);
+  }
+
+  /* Copy */
+  .hero__status {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 0.35rem 0.85rem;
+    border: 1px solid var(--border-accent);
+    border-radius: var(--radius-full);
+    background: var(--accent-wash);
+    color: var(--accent-bright);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+  }
+
+  .hero__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 3px rgba(127, 166, 255, 0.18);
+  }
+
+  .hero__title {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin-top: var(--space-5);
+  }
+
+  .hero__name {
+    font-size: var(--text-sm);
+    font-family: var(--font-mono);
+    font-weight: 400;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-subtle);
+  }
+
+  .hero__headline {
+    font-size: var(--text-5xl);
+    letter-spacing: var(--tracking-tighter);
+    background: linear-gradient(180deg, #ffffff 26%, #9fb2cc);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .hero__role {
+    margin-top: var(--space-5);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--accent);
+  }
+
+  .hero__lede {
+    margin-top: var(--space-4);
+    max-width: 56ch;
+    color: var(--text-muted);
+    font-size: var(--text-xl);
+    line-height: var(--leading-relaxed);
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-7);
+  }
+
+  .hero__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-5);
+    margin-top: var(--space-7);
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--border);
+  }
+
+  .hero__links a {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+
+  .hero__links a:hover {
+    color: var(--accent-bright);
+  }
+
+  /* Visual */
+  .hero__visual {
+    position: relative;
+  }
+
+  /* The two frames overlap slightly, like phones laid side by side on a desk. */
+  .hero__devices {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-block: var(--space-4);
+  }
+
+  :global(.hero__device) {
+    flex: 0 1 200px;
+    min-width: 0;
+  }
+
+  :global(.hero__device--back) {
+    transform: rotate(-6deg);
+    margin-inline-end: -11%;
+    opacity: 0.9;
+  }
+
+  :global(.hero__device--front) {
+    position: relative;
+    z-index: 1;
+    transform: rotate(4deg) translateY(18px);
+  }
+
+  .hero__stack {
+    margin-top: var(--space-6);
+    padding: var(--space-5);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: linear-gradient(180deg, var(--surface-1), rgba(16, 19, 22, 0.4));
+    backdrop-filter: blur(8px);
+  }
+
+  .hero__stack-title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .hero__stack ul {
+    display: grid;
+    gap: 1px;
+    margin-top: var(--space-4);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    background: var(--border);
+  }
+
+  .hero__stack li {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: var(--space-3) var(--space-4);
+    background: var(--surface-2);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+  }
+
+  .hero__layer-name {
+    color: var(--text);
+  }
+
+  .hero__layer-detail {
+    color: var(--text-subtle);
+  }
+
+  /* Entrance: one gentle rise, staggered. */
+  @media (prefers-reduced-motion: no-preference) {
+    .hero__copy > *,
+    .hero__visual {
+      animation: hero-rise 0.85s var(--ease-out) backwards;
+    }
+
+    .hero__status {
+      animation-delay: 0.02s;
+    }
+    .hero__title {
+      animation-delay: 0.09s;
+    }
+    .hero__role {
+      animation-delay: 0.16s;
+    }
+    .hero__lede {
+      animation-delay: 0.22s;
+    }
+    .hero__actions {
+      animation-delay: 0.29s;
+    }
+    .hero__links {
+      animation-delay: 0.35s;
+    }
+    .hero__visual {
+      animation-delay: 0.18s;
+    }
+
+    /* A very slow drift so the composition is not perfectly static. */
+    :global(.hero__device--front) {
+      animation:
+        hero-rise 0.85s var(--ease-out) backwards,
+        float-a 11s ease-in-out 1s infinite;
+    }
+    :global(.hero__device--back) {
+      animation:
+        hero-rise 0.85s var(--ease-out) backwards,
+        float-b 13s ease-in-out 1.4s infinite;
+    }
+  }
+
+  @keyframes hero-rise {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+  }
+
+  @keyframes float-a {
+    0%,
+    100% {
+      transform: rotate(4deg) translateY(18px);
+    }
+    50% {
+      transform: rotate(4deg) translateY(4px);
+    }
+  }
+
+  @keyframes float-b {
+    0%,
+    100% {
+      transform: rotate(-6deg) translateY(0);
+    }
+    50% {
+      transform: rotate(-6deg) translateY(10px);
+    }
+  }
+
+  @media (min-width: 560px) {
+    :global(.hero__device) {
+      flex-basis: 226px;
+    }
+  }
+
+  @media (min-width: 1000px) {
+    .hero__inner {
+      grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+      align-items: center;
+    }
+
+    .hero__devices {
+      padding-block: var(--space-6);
+    }
+
+    :global(.hero__device) {
+      flex-basis: 218px;
+    }
+
+    .hero__stack {
+      max-width: 27rem;
+      margin-inline: auto;
+    }
+  }
+</style>
