@@ -1,6 +1,6 @@
 ---
 import type { Project } from '../data/projects';
-import DeviceFrame from './DeviceFrame.astro';
+import ProjectMedia from './ProjectMedia.astro';
 import Icon from './Icon.astro';
 
 interface Props {
@@ -10,7 +10,7 @@ interface Props {
 
 const { project, index } = Astro.props;
 const flipped = index % 2 === 1;
-const hasShots = project.shots.length > 0;
+const hasMedia = project.media.length > 0;
 ---
 
 <article
@@ -20,20 +20,11 @@ const hasShots = project.shots.length > 0;
 >
   <div class="showcase__media reveal">
     {
-      hasShots ? (
-        <div class="shots" data-shots>
-          <ul class="shots__track">
-            {project.shots.map((shot, i) => (
-              <li class="shots__item">
-                <DeviceFrame src={shot.src} alt={shot.alt} eager={index === 0 && i === 0} />
-                <p class="shots__caption">{shot.caption}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
+      hasMedia ? (
+        <ProjectMedia items={project.media} projectName={project.name} priority={index === 0} />
       ) : (
-        /* No real screenshot exists for this project, so the slot shows the
-           project's own mark and its architecture instead of a mockup. */
+        /* No real capture exists for this project, so the slot shows the
+           project's own mark and its stack instead of a mockup. */
         <div class="placeholder">
           {project.logo && (
             <img
@@ -54,7 +45,7 @@ const hasShots = project.shots.length > 0;
           </ul>
           <p class="placeholder__note">
             <Icon name="code" size={13} />
-            No screenshots — see the note below
+            No captures available — see the note below
           </p>
         </div>
       )
@@ -151,45 +142,6 @@ const hasShots = project.shots.length > 0;
     /* Grid children default to min-width:auto, which would let the horizontal
        screenshot scroller below stretch the whole page instead of scrolling. */
     min-width: 0;
-  }
-
-  .shots {
-    /* On narrow screens the frames scroll sideways instead of stacking into
-       an endless column. */
-    overflow-x: auto;
-    overflow-y: hidden;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
-    scrollbar-color: var(--surface-3) transparent;
-    margin-inline: calc(var(--gutter) * -1);
-    padding-inline: var(--gutter);
-    padding-block-end: var(--space-4);
-  }
-
-  .shots__track {
-    display: flex;
-    gap: var(--space-4);
-    width: max-content;
-  }
-
-  .shots__item {
-    width: 196px;
-    flex: none;
-    scroll-snap-align: center;
-    transition: transform var(--duration) var(--ease-out);
-  }
-
-  .shots__item:hover {
-    transform: translateY(-6px);
-  }
-
-  .shots__caption {
-    margin-top: var(--space-3);
-    text-align: center;
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    color: var(--text-subtle);
   }
 
   /* Honest stand-in when no real capture exists */
@@ -400,36 +352,6 @@ const hasShots = project.shots.length > 0;
 
     .showcase--flipped .showcase__media {
       order: 2;
-    }
-
-    .shots {
-      margin-inline: 0;
-      padding-inline: 0;
-      position: sticky;
-      top: calc(var(--header-h) + var(--space-6));
-    }
-
-    .shots__track {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: var(--space-5);
-      width: auto;
-    }
-
-    .shots__item {
-      width: auto;
-    }
-
-    /* The case study gets the taller, denser grid. */
-    .showcase--case .shots__track {
-      grid-template-columns: 1fr 1fr;
-    }
-  }
-
-  @media (min-width: 1180px) {
-    .shots__item {
-      max-width: 230px;
-      margin-inline: auto;
     }
   }
 </style>

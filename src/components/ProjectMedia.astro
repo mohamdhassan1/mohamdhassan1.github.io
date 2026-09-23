@@ -1,0 +1,125 @@
+---
+/**
+ * The one media system every project showcase uses.
+ *
+ * Images and video both go through the same device frame, the same track
+ * layout, the same captions and the same hover, so a screen recording and a
+ * screenshot are presented identically — only the content differs. Nothing
+ * here is project-specific.
+ */
+import type { MediaItem } from '../data/projects';
+import DeviceFrame from './DeviceFrame.astro';
+
+interface Props {
+  items: MediaItem[];
+  /** Used to name video controls, e.g. "Play the FoodLens demo". */
+  projectName: string;
+  /** True for the first showcase on the page, whose first frame loads eagerly. */
+  priority?: boolean;
+}
+
+const { items, projectName, priority = false } = Astro.props;
+---
+
+<div class="media" data-media>
+  <ul class="media__track">
+    {
+      items.map((item, i) => (
+        <li class="media__item">
+          <DeviceFrame
+            kind={item.kind}
+            src={item.src}
+            alt={item.alt}
+            label={`the ${projectName} demo`}
+            srcWebm={item.kind === 'video' ? item.srcWebm : undefined}
+            poster={item.kind === 'video' ? item.poster : undefined}
+            eager={priority && i === 0}
+          />
+          <p class="media__caption">{item.caption}</p>
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<style>
+  .media {
+    /* Narrow screens scroll the frames sideways rather than stacking them into
+       an endless column. min-width:0 on the parent keeps this contained. */
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: var(--surface-3) transparent;
+    margin-inline: calc(var(--gutter) * -1);
+    padding-inline: var(--gutter);
+    padding-block-end: var(--space-4);
+  }
+
+  .media__track {
+    display: flex;
+    gap: var(--space-4);
+    width: max-content;
+  }
+
+  .media__item {
+    width: 196px;
+    flex: none;
+    scroll-snap-align: center;
+    transition: transform var(--duration) var(--ease-out);
+  }
+
+  .media__item:hover {
+    transform: translateY(-6px);
+  }
+
+  .media__caption {
+    margin-top: var(--space-3);
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--text-subtle);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .media__item:hover {
+      transform: none;
+    }
+  }
+
+  @media (min-width: 940px) {
+    .media {
+      margin-inline: 0;
+      padding-inline: 0;
+      position: sticky;
+      top: calc(var(--header-h) + var(--space-6));
+    }
+
+    .media__track {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-5);
+      width: auto;
+    }
+
+    .media__item {
+      width: auto;
+    }
+
+    /* An odd number of frames would otherwise leave a hole in the last row;
+       centring the final one keeps every project balanced. */
+    .media__item:last-child:nth-child(odd) {
+      grid-column: 1 / -1;
+      justify-self: center;
+      width: min(100%, 230px);
+    }
+  }
+
+  @media (min-width: 1180px) {
+    .media__item {
+      max-width: 230px;
+      margin-inline: auto;
+    }
+  }
+</style>

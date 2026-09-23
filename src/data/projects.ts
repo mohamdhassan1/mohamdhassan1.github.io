@@ -8,6 +8,11 @@
  * Live data in the Potter Library and CineVerse shots comes from the real
  * potterapi and TMDB endpoints the apps call.
  *
+ * The FoodLens clip is a screen recording of the real app on a device. It is
+ * trimmed to 37s-67s of the original and stripped of audio, because the
+ * opening signup sequence showed a real person's name, email address and
+ * phone number. Do not restore the untrimmed recording.
+ *
  * Where the CV described a stack the repository does not contain, the
  * repository won:
  *   - Travel Booking: the CV lists Supabase, GoRouter, FCM and RTL
@@ -23,12 +28,29 @@
  *     the CV rather than presented as verified from source.
  */
 
-export type Shot = {
-  src: string;
-  alt: string;
-  /** Short caption shown under the frame in the gallery. */
-  caption: string;
-};
+/**
+ * One media system for every project: a screenshot and a screen recording are
+ * both just a `MediaItem`, and both render through the same device frame.
+ */
+export type MediaItem =
+  | {
+      kind: 'image';
+      src: string;
+      alt: string;
+      /** Short caption shown under the frame. */
+      caption: string;
+    }
+  | {
+      kind: 'video';
+      /** MP4 (H.264) — the universally supported fallback. */
+      src: string;
+      /** WebM (VP9), offered first where supported. */
+      srcWebm: string;
+      /** Still shown before the clip loads; also the poster on reduced motion. */
+      poster: string;
+      alt: string;
+      caption: string;
+    };
 
 export type Project = {
   slug: string;
@@ -48,7 +70,7 @@ export type Project = {
   features: string[];
   technical: { label: string; value: string }[];
   stack: string[];
-  shots: Shot[];
+  media: MediaItem[];
   /** Shown verbatim when a claim comes from the CV rather than the source. */
   note?: string;
 };
@@ -118,23 +140,27 @@ export const featuredProjects: Project[] = [
       'Flutter l10n',
       'flutter_test',
     ],
-    shots: [
+    media: [
       {
+        kind: 'image',
         src: '/projects/vcare-onboarding.webp',
         alt: 'VCare onboarding screen with the app logo and a Get Started button',
         caption: 'Onboarding',
       },
       {
+        kind: 'image',
         src: '/projects/vcare-signin.webp',
         alt: 'VCare sign-in screen with email and password fields in dark mode',
         caption: 'Sign in',
       },
       {
+        kind: 'image',
         src: '/projects/vcare-signup.webp',
         alt: 'VCare create-account screen with name, email, phone, gender and password fields',
         caption: 'Create account',
       },
       {
+        kind: 'image',
         src: '/projects/vcare-forgot-password.webp',
         alt: 'VCare forgot-password screen',
         caption: 'Password reset',
@@ -183,37 +209,33 @@ export const featuredProjects: Project[] = [
       },
     ],
     stack: ['Flutter', 'Dart', 'BLoC', 'Dio', 'REST API', 'SharedPreferences', 'cached_network_image'],
-    shots: [
+    media: [
       {
+        kind: 'image',
         src: '/projects/library-home.webp',
         alt: 'Potter Library home screen showing character avatars, a featured book and a popular books row',
         caption: 'Home — live API data',
       },
       {
+        kind: 'image',
         src: '/projects/library-books.webp',
         alt: 'Potter Library all-books grid showing the Harry Potter series covers',
         caption: 'All books',
       },
       {
+        kind: 'image',
         src: '/projects/library-book-details.webp',
         alt: 'Potter Library detail screen for Harry Potter and the Chamber of Secrets with page count, release date and description',
         caption: 'Book details',
       },
       {
+        kind: 'image',
         src: '/projects/library-explore.webp',
         alt: 'Potter Library explore screen',
         caption: 'Explore',
       },
-      {
-        src: '/projects/library-search.webp',
-        alt: 'Potter Library search screen with quick suggestion chips',
-        caption: 'Search',
-      },
-      {
-        src: '/projects/library-onboarding.webp',
-        alt: 'Potter Library onboarding screen',
-        caption: 'Onboarding',
-      },
+      /* Search and onboarding are captured but not shown — four frames keeps
+         this project level with the others instead of dominating the page. */
     ],
   },
 
@@ -257,22 +279,21 @@ export const featuredProjects: Project[] = [
       },
     ],
     stack: ['Flutter', 'Dart', 'Cubit', 'TMDB REST API', 'http', 'carousel_slider', 'shimmer', 'cached_network_image'],
-    shots: [
+    media: [
       {
+        kind: 'image',
         src: '/projects/movie-home.webp',
         alt: 'CineVerse home screen with a featured film carousel and Most Popular and Top Rated rows of real film posters',
         caption: 'Home — live TMDB data',
       },
       {
+        kind: 'image',
         src: '/projects/movie-explore.webp',
         alt: 'CineVerse explore screen with a search field, genre chips and a grid of rated film posters',
         caption: 'Explore & search',
       },
-      {
-        src: '/projects/movie-profile.webp',
-        alt: 'CineVerse profile screen',
-        caption: 'Profile',
-      },
+      /* The profile screen is not shown: it renders placeholder account data
+         rather than anything the app actually computes. */
     ],
   },
 
@@ -288,12 +309,14 @@ export const featuredProjects: Project[] = [
     problem:
       'A travel app needs accounts before it needs anything else: people have to sign in, browse destinations, open a trip and book it, with their data following them between sessions.',
     solution:
-      'A multi-screen Flutter app on Firebase. Firebase Authentication handles register and login, Cloud Firestore stores destinations and bookings, and BLoCs for login, registration and places keep the screens free of direct service calls behind repository classes.',
+      'A multi-screen Flutter app on Firebase, built to a travel-app UI spec. Firebase Authentication handles register and login, Cloud Firestore stores the destinations, and BLoCs for login, registration and places keep the screens free of direct service calls behind repository classes.',
     features: [
       'Splash and onboarding flow into authentication',
       'Register and login screens backed by Firebase Authentication',
-      'Destination browsing from Cloud Firestore',
-      'Trip detail screens and booking flow',
+      'Explore home with a location selector, a "Find things to do" search field, and Popular and Recommended destination rails',
+      'Destination cards with cover image, star rating and a favourite toggle, loaded from Cloud Firestore',
+      'Detail screen with a full-bleed hero image, rating and reviews, description, a facilities row, price and a Book Now action',
+      'Bottom navigation across home, categories, favourites and profile',
       'Local persistence through SQLite and SharedPreferences',
     ],
     technical: [
@@ -309,10 +332,14 @@ export const featuredProjects: Project[] = [
         label: 'Backend',
         value: 'Firebase Core, Firebase Authentication and Cloud Firestore, with Google Sign-In added in the newer local build.',
       },
+      {
+        label: 'UI',
+        value: 'Built to the "Aspen Travel App Exploration" UI spec published by designer Karishma Sajjad on the Figma Community — implementing an existing design faithfully in Flutter, rather than designing it.',
+      },
     ],
     stack: ['Flutter', 'Dart', 'BLoC', 'Firebase Auth', 'Cloud Firestore', 'SQLite', 'SharedPreferences'],
-    shots: [],
-    note: 'No screenshots: the app needs a Firebase web configuration that is not in the repository, so it could not be run to capture real screens. Nothing has been mocked up in their place.',
+    media: [],
+    note: 'No screenshots: the app needs a Firebase web configuration that is not in the repository, so it could not be run to capture real screens, and the design file belongs to its original author rather than to this project. Nothing has been mocked up in their place. The screens listed above were read from the app’s own source.',
   },
 
   {
@@ -355,8 +382,26 @@ export const featuredProjects: Project[] = [
       },
     ],
     stack: ['Flutter', 'Dart', 'BLoC', 'Dio', 'Laravel REST API', 'Firebase', 'SQLite', 'YOLOv11'],
-    shots: [],
-    note: 'The public repository holds the Laravel backend; the Flutter client is not pushed. The backend, data model and endpoints above were read from the repository. The mobile stack, the team role and the YOLOv11 accuracy figure come from the CV and the project documentation.',
+    media: [
+      {
+        kind: 'video',
+        src: '/projects/foodlens-demo.mp4',
+        srcWebm: '/projects/foodlens-demo.webm',
+        poster: '/projects/foodlens-poster.webp',
+        alt: 'Screen recording of FoodLens running on a phone: the daily dashboard, photographing a banana in the food scanner, and the recognised item appearing in the scan history',
+        caption: 'Recorded on device',
+      },
+      /* Only one still alongside the clip: the recording already walks through
+         the dashboard, so a dashboard screenshot beside it just repeats what is
+         playing. Scan history is the one screen the clip passes through quickly. */
+      {
+        kind: 'image',
+        src: '/projects/foodlens-history.webp',
+        alt: 'FoodLens scan history listing recognised foods with their calorie values',
+        caption: 'Scan history',
+      },
+    ],
+    note: 'The clip is a screen recording of the real app, trimmed to the tracking and scanning flow. The public repository holds the Laravel backend; the Flutter client is not pushed. The backend, data model and endpoints above were read from the repository. The mobile stack, the team role and the YOLOv11 accuracy figure come from the CV and the project documentation.',
   },
 ];
 
@@ -390,7 +435,7 @@ export const moreProjects: Project[] = [
       },
     ],
     stack: ['Flutter', 'Dart', 'SQLite', 'sqflite', 'Lottie'],
-    shots: [],
+    media: [],
     note: 'No screenshots: sqflite has no web implementation, so the app cannot be run in a browser to capture real screens.',
   },
 ];

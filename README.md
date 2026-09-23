@@ -56,6 +56,21 @@ The site deliberately claims only what can be checked:
 If the missing source is pushed later, add the claims back in `src/data/projects.ts` and
 `src/data/skills.ts`.
 
+## Project media
+
+Every project renders its media through one component, ,
+which wraps each item in . Screenshots and video go through the same path,
+so a screen recording and a still are presented identically — same bezel, radius, shadow, hover
+and entrance animation. Adding media to a project means adding entries to its  array in
+; no per-project styling exists or should be added.
+
+Frames render at one canonical phone aspect ratio (375:812) with , so rows
+line up exactly even though the screen captures are 375:812 and the screen recording is 384:848.
+
+The FoodLens clip autoplays muted and looping when scrolled into view, pauses when it leaves,
+and is not fetched at all until then. Under  it stays on its
+poster until the viewer presses play. Without JavaScript the native video controls remain.
+
 ## Regenerating screenshots
 
 Screenshots in `public/projects/` are WebP, 640px wide, produced from 1125×2436 captures.

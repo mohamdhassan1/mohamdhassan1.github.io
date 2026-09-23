@@ -1,32 +1,90 @@
 ---
 /**
- * A phone bezel around a real screenshot. Purely presentational chrome — the
- * image inside is always an actual capture of the app running.
+ * A phone bezel around real project media — a screenshot or a recording of the
+ * app running. The chrome is presentational; what sits inside is always an
+ * actual capture, never a mockup.
+ *
+ * Every frame renders at one canonical phone aspect ratio and the media is
+ * cropped to fill it, so rows of frames line up exactly even when sources
+ * differ slightly (the screen captures are 375:812, the screen recording is
+ * 384:848 — a ~2% difference that would otherwise stagger the grid).
  */
 interface Props {
+  kind?: 'image' | 'video';
   src: string;
   alt: string;
+  /** Short name for the play/pause control, e.g. 'FoodLens demo'. */
+  label?: string;
+  /** Video only: WebM sibling, offered first, and the still shown before play. */
+  srcWebm?: string;
+  poster?: string;
   /** Skip lazy-loading for frames that are above the fold. */
   eager?: boolean;
   class?: string;
 }
 
-const { src, alt, eager = false, class: className = '' } = Astro.props;
+const {
+  kind = 'image',
+  src,
+  alt,
+  label = 'video',
+  srcWebm,
+  poster,
+  eager = false,
+  class: className = '',
+} = Astro.props;
 ---
 
-<div class={`device ${className}`}>
+<div class={`device ${className}`} data-device>
   <div class="device__bezel">
     <span class="device__notch" aria-hidden="true"></span>
-    <img
-      class="device__screen"
-      src={src}
-      alt={alt}
-      width="320"
-      height="693"
-      loading={eager ? 'eager' : 'lazy'}
-      decoding="async"
-      fetchpriority={eager ? 'high' : 'auto'}
-    />
+
+    {
+      kind === 'video' ? (
+        <>
+          {/* preload="none" keeps the clip off the critical path — it is only
+              fetched once the frame scrolls into view. */}
+          <video
+            class="device__screen device__screen--video"
+            poster={poster}
+            muted
+            loop
+            playsinline
+            preload="none"
+            controls
+            aria-label={alt}
+            width="320"
+            height="693"
+            data-project-video
+          >
+            {srcWebm && <source src={srcWebm} type="video/webm" />}
+            <source src={src} type="video/mp4" />
+          </video>
+
+          {/* Without JavaScript the native controls above stay, and this custom
+              toggle stays hidden — the script swaps them round on load. */}
+          <button class="device__toggle" type="button" hidden data-video-toggle aria-label={`Play ${label}`}>
+            <svg class="device__icon device__icon--play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M8 5.14v13.72a1 1 0 0 0 1.53.85l10.1-6.86a1 1 0 0 0 0-1.7L9.53 4.29A1 1 0 0 0 8 5.14Z" />
+            </svg>
+            <svg class="device__icon device__icon--pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M8 4h3v16H8zM13 4h3v16h-3z" />
+            </svg>
+          </button>
+        </>
+      ) : (
+        <img
+          class="device__screen"
+          src={src}
+          alt={alt}
+          width="320"
+          height="693"
+          loading={eager ? 'eager' : 'lazy'}
+          decoding="async"
+          fetchpriority={eager ? 'high' : 'auto'}
+        />
+      )
+    }
   </div>
 </div>
 
@@ -63,7 +121,136 @@ const { src, alt, eager = false, class: className = '' } = Astro.props;
     display: block;
     width: 100%;
     height: auto;
+    /* The single source of truth for frame proportions. */
+    aspect-ratio: 375 / 812;
+    object-fit: cover;
+    object-position: top center;
     border-radius: 27px;
     background: var(--surface-2);
   }
+
+  /* Play / pause affordance — small, corner-anchored, never covering the UI
+     being demonstrated. */
+  .device__toggle {
+    position: absolute;
+    right: 14px;
+    bottom: 14px;
+    z-index: 3;
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: var(--radius-full);
+    background: rgba(10, 12, 14, 0.62);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: #fff;
+    cursor: pointer;
+    opacity: 0;
+    transition:
+      opacity var(--duration) var(--ease-out),
+      background var(--duration-fast) var(--ease-out),
+      border-color var(--duration-fast) var(--ease-out);
+  }
+
+  .device__toggle:hover {
+    background: rgba(10, 12, 14, 0.82);
+    border-color: var(--border-accent);
+  }
+
+  /* Revealed on hover, on keyboard focus, and always on touch, where there is
+     no hover to reveal it. */
+  .device:hover .device__toggle,
+  .device__toggle:focus-visible {
+    opacity: 1;
+  }
+
+  @media (hover: none) {
+    .device__toggle {
+      opacity: 1;
+    }
+  }
+
+  .device__icon {
+    width: 14px;
+    height: 14px;
+  }
+
+  .device__icon--pause {
+    display: none;
+  }
+
+  .device[data-playing] .device__icon--play {
+    display: none;
+  }
+
+  .device[data-playing] .device__icon--pause {
+    display: block;
+  }
 </style>
+
+<script>
+  // Project videos behave like a product demo: they start when the frame is on
+  // screen and stop as soon as it leaves, so nothing plays out of sight. The
+  // toggle hands control back to the viewer at any point.
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  document.querySelectorAll<HTMLElement>('[data-device]').forEach((device) => {
+    const video = device.querySelector<HTMLVideoElement>('[data-project-video]');
+    const toggle = device.querySelector<HTMLButtonElement>('[data-video-toggle]');
+    if (!video || !toggle) return;
+
+    // Hand over from the native controls (the no-JS fallback) to the custom
+    // toggle, which fits the frame without covering the UI being demonstrated.
+    video.removeAttribute('controls');
+    toggle.hidden = false;
+
+    // Set once the viewer presses the button, after which autoplay stops
+    // overriding their choice.
+    let userDecided = false;
+
+    // The button carries a short name; the video keeps the full description.
+    const label = (toggle.getAttribute('aria-label') ?? 'Play video').replace(/^Play /, '');
+    const sync = () => {
+      const playing = !video.paused && !video.ended;
+      device.toggleAttribute('data-playing', playing);
+      toggle.setAttribute('aria-label', `${playing ? 'Pause' : 'Play'} ${label}`);
+    };
+
+    video.addEventListener('play', sync);
+    video.addEventListener('pause', sync);
+
+    toggle.addEventListener('click', () => {
+      userDecided = true;
+      if (video.paused) {
+        video.play().catch(() => {});
+      } else {
+        video.pause();
+      }
+    });
+
+    if (!('IntersectionObserver' in window)) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            // Only load the clip once it is actually about to be watched.
+            if (video.preload !== 'auto') {
+              video.preload = 'auto';
+              video.load();
+            }
+            if (!userDecided && !reduced.matches) video.play().catch(() => {});
+          } else if (!video.paused) {
+            video.pause();
+          }
+        }
+      },
+      { threshold: 0.45 },
+    );
+
+    observer.observe(device);
+  });
+</script>
