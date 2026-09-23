@@ -58,18 +58,27 @@ If the missing source is pushed later, add the claims back in `src/data/projects
 
 ## Project media
 
-Every project renders its media through one component, ,
-which wraps each item in . Screenshots and video go through the same path,
-so a screen recording and a still are presented identically — same bezel, radius, shadow, hover
-and entrance animation. Adding media to a project means adding entries to its  array in
-; no per-project styling exists or should be added.
+Every project renders its media through one component, `src/components/ProjectMedia.astro`, which
+wraps each item in `DeviceFrame.astro`. Screenshots and video go through the same path, so a screen
+recording and a still are presented identically — same bezel, radius, shadow, hover and entrance
+animation. Adding media to a project means adding entries to its `media` array in
+`src/data/projects.ts`; no per-project media styling exists, and none should be added.
 
-Frames render at one canonical phone aspect ratio (375:812) with , so rows
-line up exactly even though the screen captures are 375:812 and the screen recording is 384:848.
+Frames render at one canonical phone aspect ratio (375:812) with `object-fit: cover`, so rows line
+up exactly even though the screen captures are 375:812 and the screen recording is 384:848.
 
-The FoodLens clip autoplays muted and looping when scrolled into view, pauses when it leaves,
-and is not fetched at all until then. Under  it stays on its
-poster until the viewer presses play. Without JavaScript the native video controls remain.
+The FoodLens clip autoplays muted and looping when scrolled into view, pauses when it leaves, and is
+not fetched at all until then. Under `prefers-reduced-motion: reduce` it stays on its poster until
+the viewer presses play. Without JavaScript the native video controls remain.
+
+### Re-encoding the clip
+
+The shipped clip was produced from the original recording with ffmpeg — trimmed, scaled, audio
+stripped, and written as both MP4 (H.264) and WebM (VP9):
+
+```bash
+ffmpeg -ss 37 -to 67.2 -i original.mp4 -an -c:v libx264 -profile:v main -pix_fmt yuv420p -crf 30 -preset slow -movflags +faststart -vf "scale=384:-2,fps=24" public/projects/foodlens-demo.mp4
+```
 
 ## Regenerating screenshots
 
