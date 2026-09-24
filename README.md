@@ -43,12 +43,15 @@ motion and the shared button/card/badge classes. Components reference tokens onl
 
 The site deliberately claims only what can be checked:
 
-- **Every screenshot is real.** Each one was captured by building the app for web from its own
-  source and driving the running app. The Potter Library and CineVerse screens show live data from
-  the real Potter API and TMDB. Nothing is a mockup.
-- **Two projects have no screenshots** — Travel Booking needs a Firebase web configuration that is
-  not in the repository, and the Notes app uses `sqflite`, which has no web implementation. Both
-  say so on the page rather than showing invented screens.
+- **Every screenshot is a real capture.** Most were taken by building the app for web from its own
+  source and driving the running app; the Notes frames come from an Android emulator, because
+  `sqflite` has no web implementation. The Potter Library and CineVerse screens show live data from
+  the real Potter API and TMDB. The FoodLens clip is a screen recording of the app on a device.
+  Nothing is a mockup.
+- **Travel Booking is the one exception, and says so.** It has no runnable web build, so its three
+  frames are the published UI design the app implements. They are captioned "Design spec", credited
+  to the designer in the project note, and linked to the original Figma file. They must never be
+  recaptioned as screenshots of the running app.
 - **Where the CV and the source disagreed, the source won.** Supabase, GoRouter and Firebase Cloud
   Messaging appear in no repository, so they are not claimed anywhere on the site. See the header
   comment in `src/data/projects.ts` for the specific cases.
@@ -59,13 +62,14 @@ If the missing source is pushed later, add the claims back in `src/data/projects
 ## Project media
 
 Every project renders its media through one component, `src/components/ProjectMedia.astro`, which
-wraps each item in `DeviceFrame.astro`. Screenshots and video go through the same path, so a screen
-recording and a still are presented identically — same bezel, radius, shadow, hover and entrance
-animation. Adding media to a project means adding entries to its `media` array in
+wraps each item in `MobileMockup.astro`. Screenshots, design frames and video all go through the
+same path, so they are presented identically — same phone bezel, radius, border, shadow, hover and
+entrance animation. Adding media to a project means adding entries to its `media` array in
 `src/data/projects.ts`; no per-project media styling exists, and none should be added.
 
-Frames render at one canonical phone aspect ratio (375:812) with `object-fit: cover`, so rows line
-up exactly even though the screen captures are 375:812 and the screen recording is 384:848.
+Frames render at one canonical phone aspect ratio (375:812). Because every still is normalised to
+that ratio at the asset level (below), `object-fit: cover` never actually crops anything — a row of
+frames from any two projects lines up to the pixel.
 
 The FoodLens clip autoplays muted and looping when scrolled into view, pauses when it leaves, and is
 not fetched at all until then. Under `prefers-reduced-motion: reduce` it stays on its poster until
