@@ -80,13 +80,26 @@ stripped, and written as both MP4 (H.264) and WebM (VP9):
 ffmpeg -ss 37 -to 67.2 -i original.mp4 -an -c:v libx264 -profile:v main -pix_fmt yuv420p -crf 30 -preset slow -movflags +faststart -vf "scale=384:-2,fps=24" public/projects/foodlens-demo.mp4
 ```
 
+## Normalising media
+
+Every frame ships at exactly 640x1386 (375:812). `scripts/normalize-media.mjs` fits each
+capture inside that canvas without distorting it and pads any leftover space with a colour
+sampled from the capture’s own edge, so nothing is ever stretched or cropped:
+
+```bash
+node scripts/normalize-media.mjs
+```
+
+Sources live outside the repo in the capture workspace. Most projects need no padding at all;
+the Notes frames pad 38px horizontally and Travel 1-2px vertically.
+
 ## Regenerating screenshots
 
 Screenshots in `public/projects/` are WebP, 640px wide, produced from 1125×2436 captures.
-`scripts-optimize.mjs` does the conversion:
+`scripts/optimize-screenshots.mjs` does the conversion:
 
 ```bash
-node scripts-optimize.mjs
+node scripts/optimize-screenshots.mjs
 ```
 
 It reads raw PNGs from the capture directory and writes optimised WebP into `public/projects/`.

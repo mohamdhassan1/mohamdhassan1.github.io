@@ -1,7 +1,7 @@
 ---
 import { site } from '../data/site';
 import Icon from './Icon.astro';
-import DeviceFrame from './DeviceFrame.astro';
+import MobileMockup from './MobileMockup.astro';
 
 // The layer labels mirror the actual folder structure of the VCare repository.
 const layers = [
@@ -68,13 +68,13 @@ const layers = [
 
     <div class="hero__visual">
       <div class="hero__devices">
-        <DeviceFrame
+        <MobileMockup
           class="hero__device hero__device--back"
           src="/projects/library-home.webp"
           alt="Potter Library home screen running on live API data, showing character avatars and book covers"
           eager
         />
-        <DeviceFrame
+        <MobileMockup
           class="hero__device hero__device--front"
           src="/projects/vcare-signin.webp"
           alt="VCare sign-in screen in dark mode"

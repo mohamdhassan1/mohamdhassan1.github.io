@@ -115,13 +115,26 @@ const hasMedia = project.media.length > 0;
         )
       }
 
+      {/* Actions share one button style. Only real destinations appear here —
+          no project gets a "live demo" link that goes nowhere. */}
       {
-        project.repo && (
-          <a class="btn btn--ghost showcase__cta" href={project.repo} target="_blank" rel="noopener noreferrer">
-            <Icon name="github" class="btn__icon" />
-            View source
-            <Icon name="arrow-up-right" class="btn__icon" />
-          </a>
+        (project.repo || project.links?.length) && (
+          <div class="showcase__actions">
+            {project.repo && (
+              <a class="btn btn--ghost showcase__cta" href={project.repo} target="_blank" rel="noopener noreferrer">
+                <Icon name="github" class="btn__icon" />
+                View source
+                <Icon name="arrow-up-right" class="btn__icon" />
+              </a>
+            )}
+            {project.links?.map((link) => (
+              <a class="btn btn--ghost showcase__cta" href={link.href} target="_blank" rel="noopener noreferrer">
+                <Icon name={link.icon ?? 'arrow-up-right'} class="btn__icon" />
+                {link.label}
+                <Icon name="arrow-up-right" class="btn__icon" />
+              </a>
+            ))}
+          </div>
         )
       }
     </div>
@@ -337,6 +350,12 @@ const hasMedia = project.media.length > 0;
     flex: none;
     margin-top: 0.3em;
     color: var(--accent);
+  }
+
+  .showcase__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
   }
 
   .showcase__cta {

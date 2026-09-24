@@ -9,7 +9,7 @@ import Icon from './Icon.astro';
   <div class="container">
     <div class="projects__head reveal">
       <p class="eyebrow">Featured projects</p>
-      <h2 class="section-title">Five apps, and the code behind them.</h2>
+      <h2 class="section-title">Six apps, and the code behind them.</h2>
       <p class="section-lede">
         Everything below is a capture of the real app — screenshots taken from each project running from its
         own source, and for FoodLens a screen recording from the device. The Potter Library and CineVerse
@@ -27,8 +27,8 @@ import Icon from './Icon.astro';
 <section class="section more">
   <div class="container">
     <div class="more__head reveal">
-      <p class="eyebrow">More projects</p>
-      <h2 class="section-title">Smaller builds.</h2>
+      <p class="eyebrow">Source</p>
+      <h2 class="section-title">All of it is public.</h2>
     </div>
 
     <ul class="more__grid">
@@ -41,6 +41,15 @@ import Icon from './Icon.astro';
             </div>
             <h3 class="more__title">{project.name}</h3>
             <p class="more__tagline">{project.tagline}</p>
+            {project.media.length > 0 && (
+              <ul class="more__shots">
+                {project.media.map((item) => (
+                  <li class="more__shot">
+                    <img src={item.src} alt={item.alt} width="640" height="1386" loading="lazy" decoding="async" />
+                  </li>
+                ))}
+              </ul>
+            )}
             <p class="more__body">{project.solution}</p>
             <ul class="badge-list more__stack">
               {project.stack.map((tech) => (
@@ -128,6 +137,28 @@ import Icon from './Icon.astro';
   .more__tagline {
     color: var(--accent);
     font-size: var(--text-sm);
+  }
+
+  .more__shots {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-2);
+    margin: var(--space-1) 0 var(--space-2);
+    list-style: none;
+    padding: 0;
+  }
+
+  .more__shot {
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface-2);
+  }
+
+  .more__shot img {
+    display: block;
+    width: 100%;
+    height: auto;
   }
 
   .more__body {

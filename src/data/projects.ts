@@ -3,10 +3,16 @@
  *
  * ACCURACY NOTES — read before editing:
  *
- * Every screenshot referenced here was captured by building the app for web
- * from its own source and driving the real running app. Nothing is a mockup.
- * Live data in the Potter Library and CineVerse shots comes from the real
- * potterapi and TMDB endpoints the apps call.
+ * Every screenshot referenced here was captured from a real running app, not
+ * mocked up. Most were captured by building the app for web from its own
+ * source; the Notes shots come from an Android emulator, because sqflite has
+ * no web implementation. Live data in the Potter Library and CineVerse shots
+ * comes from the real potterapi and TMDB endpoints the apps call.
+ *
+ * The one exception is Travel Booking, which has no runnable web build: its
+ * three frames are the published UI design the app implements, captioned and
+ * noted as the design spec and credited to the designer. They must never be
+ * recaptioned as screenshots of the app.
  *
  * The FoodLens clip is a screen recording of the real app on a device. It is
  * trimmed to 37s-67s of the original and stripped of audio, because the
@@ -36,6 +42,8 @@ export type MediaItem =
   | {
       kind: 'image';
       src: string;
+      /** 'contain' for a source whose shape is not 9:19.5, so it is letterboxed rather than clipped. */
+      fit?: 'cover' | 'contain';
       alt: string;
       /** Short caption shown under the frame. */
       caption: string;
@@ -63,6 +71,8 @@ export type Project = {
   featured?: boolean;
   caseStudy?: boolean;
   repo?: string;
+  /** Extra actions beside the repo button. Only real destinations belong here. */
+  links?: { label: string; href: string; icon?: 'github' | 'arrow-up-right' | 'code' }[];
   /** Rendered as an accent-coloured mark when there are no screenshots. */
   logo?: { src: string; alt: string };
   problem: string;
@@ -143,30 +153,42 @@ export const featuredProjects: Project[] = [
     media: [
       {
         kind: 'image',
-        src: '/projects/vcare-onboarding.webp',
-        alt: 'VCare onboarding screen with the app logo and a Get Started button',
-        caption: 'Onboarding',
+        src: '/projects/vcare-home.webp',
+        alt: 'VCare home screen with a search field, a Find Nearby banner, a doctor-specialties row and a recommended-doctors list',
+        caption: 'Home',
       },
       {
         kind: 'image',
-        src: '/projects/vcare-signin.webp',
-        alt: 'VCare sign-in screen with email and password fields in dark mode',
-        caption: 'Sign in',
+        src: '/projects/vcare-search.webp',
+        alt: 'VCare doctor search filtered to cardiology, showing six results with rate and location',
+        caption: 'Search & filter',
       },
       {
         kind: 'image',
-        src: '/projects/vcare-signup.webp',
-        alt: 'VCare create-account screen with name, email, phone, gender and password fields',
-        caption: 'Create account',
+        src: '/projects/vcare-doctor-details.webp',
+        alt: 'VCare doctor details screen with the consultation fee, working hours, an about section and a Book Appointment button',
+        caption: 'Doctor details',
       },
       {
         kind: 'image',
-        src: '/projects/vcare-forgot-password.webp',
-        alt: 'VCare forgot-password screen',
-        caption: 'Password reset',
+        src: '/projects/vcare-booking.webp',
+        alt: 'VCare book-appointment screen with a date strip, a grid of times, a notes field and a Confirm Booking button',
+        caption: 'Booking',
+      },
+      {
+        kind: 'image',
+        src: '/projects/vcare-appointments.webp',
+        alt: 'VCare my-appointments list with pending bookings showing doctor, specialty, date and time',
+        caption: 'My appointments',
+      },
+      {
+        kind: 'image',
+        src: '/projects/vcare-ai-assistant.webp',
+        alt: 'VCare AI assistant screen with a medical-advice disclaimer, suggested questions and a message field',
+        caption: 'AI assistant',
       },
     ],
-    note: 'Screenshots cover the pre-authentication flow. The doctor, booking and assistant screens sit behind a login, so they are described here rather than shown.',
+    note: 'Screenshots are the running app driven end to end, signed in as a test account against a seeded database — the doctor names, fees and appointment times are generated fixture data, not real clinic listings.',
   },
 
   {
@@ -306,6 +328,13 @@ export const featuredProjects: Project[] = [
     role: 'Sole developer',
     featured: true,
     repo: 'https://github.com/mohamdhassan1/Travel',
+    links: [
+      {
+        label: 'UI design on Figma',
+        href: 'https://www.figma.com/community/file/1091615514005406765/aspen-travel-app-exploration-mobile-app-design',
+        icon: 'code',
+      },
+    ],
     problem:
       'A travel app needs accounts before it needs anything else: people have to sign in, browse destinations, open a trip and book it, with their data following them between sessions.',
     solution:
@@ -338,8 +367,27 @@ export const featuredProjects: Project[] = [
       },
     ],
     stack: ['Flutter', 'Dart', 'BLoC', 'Firebase Auth', 'Cloud Firestore', 'SQLite', 'SharedPreferences'],
-    media: [],
-    note: 'No screenshots: the app needs a Firebase web configuration that is not in the repository, so it could not be run to capture real screens, and the design file belongs to its original author rather than to this project. Nothing has been mocked up in their place. The screens listed above were read from the app’s own source.',
+    media: [
+      {
+        kind: 'image',
+        src: '/projects/travel-hero.webp',
+        alt: 'Frame from the Aspen travel UI design: a full-bleed mountain photograph over the words Plan your Luxurious Vacation and an Explore button',
+        caption: 'Design spec — onboarding',
+      },
+      {
+        kind: 'image',
+        src: '/projects/travel-explore.webp',
+        alt: 'Frame from the Aspen travel UI design: an explore screen with a location selector, a search field, category chips and Popular and Recommended destination rails',
+        caption: 'Design spec — explore',
+      },
+      {
+        kind: 'image',
+        src: '/projects/travel-detail.webp',
+        alt: 'Frame from the Aspen travel UI design: a destination detail screen with a hero photograph, rating, description, facilities row, price and a Book Now button',
+        caption: 'Design spec — destination detail',
+      },
+    ],
+    note: 'The three frames above are the published Aspen UI design this app implements — the spec, not the running app, and credited to its author below. The app itself needs a Firebase web configuration that is not in the repository, so it could not be run to capture real screens, and nothing has been mocked up to look like one. The screens listed above were read from the app’s own source.',
   },
 
   {
@@ -403,9 +451,7 @@ export const featuredProjects: Project[] = [
     ],
     note: 'The clip is a screen recording of the real app, trimmed to the tracking and scanning flow. The public repository holds the Laravel backend; the Flutter client is not pushed. The backend, data model and endpoints above were read from the repository. The mobile stack, the team role and the YOLOv11 accuracy figure come from the CV and the project documentation.',
   },
-];
 
-export const moreProjects: Project[] = [
   {
     slug: 'notes',
     name: 'Notes App',
@@ -435,7 +481,34 @@ export const moreProjects: Project[] = [
       },
     ],
     stack: ['Flutter', 'Dart', 'SQLite', 'sqflite', 'Lottie'],
-    media: [],
-    note: 'No screenshots: sqflite has no web implementation, so the app cannot be run in a browser to capture real screens.',
+    media: [
+      {
+        kind: 'image',
+        src: '/projects/notes-onboarding.webp',
+        alt: 'Notes app onboarding screen with a Lottie illustration and a Get Started button',
+        caption: 'Onboarding',
+      },
+      {
+        kind: 'image',
+        src: '/projects/notes-list.webp',
+        alt: 'Notes app home screen with saved notes in a staggered grid of coloured cards',
+        caption: 'Note list',
+      },
+      {
+        kind: 'image',
+        src: '/projects/notes-new-note.webp',
+        alt: 'Notes app new-note screen with title and description fields and a save action',
+        caption: 'New note',
+      },
+      {
+        kind: 'image',
+        src: '/projects/notes-delete.webp',
+        alt: 'Notes app delete-confirmation dialog over the note grid',
+        caption: 'Delete confirmation',
+      },
+    ],
+    note: 'Screenshots are the running app on an Android emulator. sqflite has no web implementation, so these could not be captured through the web build used for the other projects.',
   },
 ];
+
+export const moreProjects: Project[] = [];

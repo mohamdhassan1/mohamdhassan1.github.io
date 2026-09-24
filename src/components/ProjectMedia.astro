@@ -8,7 +8,7 @@
  * here is project-specific.
  */
 import type { MediaItem } from '../data/projects';
-import DeviceFrame from './DeviceFrame.astro';
+import MobileMockup from './MobileMockup.astro';
 
 interface Props {
   items: MediaItem[];
@@ -26,7 +26,7 @@ const { items, projectName, priority = false } = Astro.props;
     {
       items.map((item, i) => (
         <li class="media__item">
-          <DeviceFrame
+          <MobileMockup
             kind={item.kind}
             src={item.src}
             alt={item.alt}

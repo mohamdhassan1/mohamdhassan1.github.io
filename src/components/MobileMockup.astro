@@ -11,6 +11,12 @@
  */
 interface Props {
   kind?: 'image' | 'video';
+  /**
+   * 'cover' (default) fills the screen — correct for true phone-ratio media.
+   * 'contain' letterboxes instead, for a source whose shape does not match, so
+   * it is never stretched or clipped.
+   */
+  fit?: 'cover' | 'contain';
   src: string;
   alt: string;
   /** Short name for the play/pause control, e.g. 'FoodLens demo'. */
@@ -25,6 +31,7 @@ interface Props {
 
 const {
   kind = 'image',
+  fit = 'cover',
   src,
   alt,
   label = 'video',
@@ -35,7 +42,7 @@ const {
 } = Astro.props;
 ---
 
-<div class={`device ${className}`} data-device>
+<div class={`device ${className}`} data-device data-fit={fit}>
   <div class="device__bezel">
     <span class="device__notch" aria-hidden="true"></span>
 
@@ -115,6 +122,11 @@ const {
     border-radius: var(--radius-full);
     background: #0a0c0e;
     z-index: 2;
+  }
+
+  .device[data-fit='contain'] .device__screen {
+    object-fit: contain;
+    object-position: center;
   }
 
   .device__screen {
