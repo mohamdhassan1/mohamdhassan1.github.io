@@ -1,9 +1,10 @@
 import { defineConfig } from 'astro/config';
 
-// Update `site` to the final deployed origin before going live — it is what
-// canonical URLs, Open Graph tags and the sitemap are built from.
+// `site` is the deployed origin: canonical URLs and Open Graph tags are built
+// from it. Deployed as a GitHub Pages user site, so it serves from the domain
+// root and needs no `base` path.
 export default defineConfig({
-  site: 'https://mohamedhassan.dev',
+  site: 'https://mohamdhassan1.github.io',
   compressHTML: true,
   build: { inlineStylesheets: 'auto' },
   image: { responsiveStyles: true },
