@@ -6,6 +6,8 @@ import { defineConfig } from 'astro/config';
 export default defineConfig({
   site: 'https://mohamdhassan1.github.io',
   compressHTML: true,
-  build: { inlineStylesheets: 'auto' },
+  // Default is "_astro"; a leading underscore is reserved by some static hosts,
+  // so the bundled CSS and fonts go somewhere portable instead.
+  build: { inlineStylesheets: 'auto', assets: 'assets' },
   image: { responsiveStyles: true },
 });

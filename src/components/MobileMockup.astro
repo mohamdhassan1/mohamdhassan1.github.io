@@ -250,9 +250,11 @@ const {
         for (const entry of entries) {
           if (entry.isIntersecting) {
             // Only load the clip once it is actually about to be watched.
+            // Calling load() once anything is already buffered would abort the
+            // request in flight, so only nudge it when nothing has loaded yet.
             if (video.preload !== 'auto') {
               video.preload = 'auto';
-              video.load();
+              if (video.readyState === 0) video.load();
             }
             if (!userDecided && !reduced.matches) video.play().catch(() => {});
           } else if (!video.paused) {
