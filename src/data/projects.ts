@@ -9,10 +9,9 @@
  * no web implementation. Live data in the Potter Library and CineVerse shots
  * comes from the real potterapi and TMDB endpoints the apps call.
  *
- * The one exception is Travel Booking, which has no runnable web build: its
- * three frames are the published UI design the app implements, captioned and
- * noted as the design spec and credited to the designer. They must never be
- * recaptioned as screenshots of the app.
+ * Rahala's frames are the real app too: built for web from its own source and
+ * run against its live Supabase project. They stop at the sign-in wall, so the
+ * catalogue, booking and profile screens are described but not shown.
  *
  * The FoodLens clip is a screen recording of the real app on a device. It is
  * trimmed to 37s-67s of the original and stripped of audio, because the
@@ -21,11 +20,15 @@
  *
  * Where the CV described a stack the repository does not contain, the
  * repository won:
- *   - Travel Booking: the CV lists Supabase, GoRouter, FCM and RTL
- *     localization. The pushed source uses Firebase Auth + Cloud Firestore
- *     with Navigator routing and no localization, so that is what is claimed
- *     here. No Supabase, go_router or firebase_messaging dependency exists in
- *     any repository.
+ *   - Rahala (formerly "Travel Booking App"): rebuilt Sep-Oct 2026 and now a
+ *     different application. Supabase, GoRouter, FCM and Arabic/RTL are no
+ *     longer CV claims to discount — every one was read in the source, and the
+ *     catalogue counts below were queried from the live Supabase project
+ *     (4 categories, 20 destinations, 40 packages). Firebase Auth, Cloud
+ *     Firestore, Google Sign-In and sqflite are gone; Firebase is kept only
+ *     for Cloud Messaging. CAVEAT: the rebuild is local and unpushed, so the
+ *     linked repository still serves the previous version. Keep the note on
+ *     the entry until it is pushed.
  *   - CineVerse: the CV describes Firebase favourites with SQLite caching.
  *     The source keeps favourites in an in-memory list and depends on neither,
  *     so the entry describes what the code does.
@@ -320,74 +323,106 @@ export const featuredProjects: Project[] = [
   },
 
   {
-    slug: 'travel-booking',
-    name: 'Travel Booking App',
-    tagline: 'Destination browsing and booking on Firebase',
+    slug: 'rahala',
+    name: 'Rahala',
+    tagline: 'Destination discovery and trip booking on a Supabase backend',
     category: 'Travel',
-    period: 'Mar — Jun 2026',
-    role: 'Sole developer',
+    period: 'Sep — Oct 2026',
+    role: 'Sole developer — Flutter client, Postgres schema and Edge Function',
     featured: true,
     repo: 'https://github.com/mohamdhassan1/Travel',
-    links: [
-      {
-        label: 'UI design on Figma',
-        href: 'https://www.figma.com/community/file/1091615514005406765/aspen-travel-app-exploration-mobile-app-design',
-        icon: 'code',
-      },
-    ],
     problem:
-      'A travel app needs accounts before it needs anything else: people have to sign in, browse destinations, open a trip and book it, with their data following them between sessions.',
+      'A booking app is only as trustworthy as its server. Prices have to be computed somewhere the client cannot reach, a booking has to survive a dropped connection without turning into two, and one account must never see another account’s trips.',
     solution:
-      'A multi-screen Flutter app on Firebase, built to a travel-app UI spec. Firebase Authentication handles register and login, Cloud Firestore stores the destinations, and BLoCs for login, registration and places keep the screens free of direct service calls behind repository classes.',
+      'A Flutter app over Supabase — Postgres with row-level security, Auth, Storage and an Edge Function. The server is the authority: a trigger prices and validates every booking, RLS enforces ownership, a SQL function handles cancellation, and push is dispatched server-side. The client stays a thin Cubit layer over repositories that throw only typed failures, with GoRouter tabs and a complete English/Arabic interface.',
     features: [
-      'Splash and onboarding flow into authentication',
-      'Register and login screens backed by Firebase Authentication',
-      'Explore home with a location selector, a "Find things to do" search field, and Popular and Recommended destination rails',
-      'Destination cards with cover image, star rating and a favourite toggle, loaded from Cloud Firestore',
-      'Detail screen with a full-bleed hero image, rating and reviews, description, a facilities row, price and a Book Now action',
-      'Bottom navigation across home, categories, favourites and profile',
-      'Local persistence through SQLite and SharedPreferences',
+      'Email sign-up with confirmation, sign-in, password reset by email link, password change, sign-out and in-app account deletion',
+      'Session restored on launch, with an expired session explained rather than dropped',
+      'A catalogue of 4 categories, 20 destinations and 40 packages served from Postgres',
+      'Search across English and Arabic text, with diacritics, tatweel and alef variants normalised, plus category, price and trip-length filters and sorting',
+      'Destination detail with a full-screen photo gallery, live weather from Open-Meteo, packages, sharing and favourites',
+      'Booking flow where the database validates the request and computes the price — a retried submit cannot create a duplicate',
+      'Trips split into upcoming, past and cancelled, with cancellation through a server-side function',
+      'In-app notification centre fed by database triggers, FCM push sent from a Supabase Edge Function, and local trip reminders on the device',
+      'Profile with a private photo served through signed URLs, travel statistics and a traveller level derived only from the user’s own bookings',
+      'Light and dark themes, English and Arabic with right-to-left layout, a bottom bar on phones and a side rail on wide windows',
     ],
     technical: [
       {
-        label: 'State management',
-        value: 'Three BLoCs — login, register and places — registered through MultiBlocProvider at the app root.',
-      },
-      {
-        label: 'Data layer',
-        value: 'An auth repository over Firebase Authentication and a places repository over Cloud Firestore, so neither service is called from a widget.',
-      },
-      {
         label: 'Backend',
-        value: 'Firebase Core, Firebase Authentication and Cloud Firestore, with Google Sign-In added in the newer local build.',
+        value: 'Supabase Postgres — 8 tables, 13 SQL functions and 8 triggers behind row-level security, applied as 5 ordered migrations, plus a Deno Edge Function that sends FCM over HTTP v1.',
       },
       {
-        label: 'UI',
-        value: 'Built to the "Aspen Travel App Exploration" UI spec published by designer Karishma Sajjad on the Figma Community — implementing an existing design faithfully in Flutter, rather than designing it.',
+        label: 'Booking integrity',
+        value: 'Price and status are computed by a database trigger, never sent by the client. An idempotency key on (user, request) means a retry after a lost response returns the original booking instead of creating a second one.',
+      },
+      {
+        label: 'State management',
+        value: '20 Cubits across session, catalog, explore, booking, favourites, profile, notifications and settings. App-wide cubits follow the session and clear on sign-out, so one account’s data never appears under another.',
+      },
+      {
+        label: 'Architecture',
+        value: 'app / core / data / logic / presentation / routing, with an architecture test that fails the build if a widget talks to Supabase, Firebase or the notification plugin directly.',
+      },
+      {
+        label: 'Errors',
+        value: 'Repositories throw only a typed AppFailure, which the UI maps to localized messages — a user never sees raw SQL or exception text.',
+      },
+      {
+        label: 'Navigation',
+        value: 'GoRouter StatefulShellRoute tabs with a redirect policy kept free of Flutter types so it can be unit-tested exhaustively, and rahala:// deep links including the auth callback.',
+      },
+      {
+        label: 'Localization',
+        value: '382 strings in English and Arabic ARB files — full parity, with right-to-left layout and Arabic-aware search normalisation.',
+      },
+      {
+        label: 'Testing',
+        value: '41 Dart test files across unit, widget and architecture suites, plus a Node test for the Edge Function’s FCM sender.',
       },
     ],
-    stack: ['Flutter', 'Dart', 'BLoC', 'Firebase Auth', 'Cloud Firestore', 'SQLite', 'SharedPreferences'],
+    stack: [
+      'Flutter',
+      'Dart',
+      'Supabase',
+      'PostgreSQL',
+      'Row-Level Security',
+      'Edge Functions',
+      'Supabase Storage',
+      'Cubit',
+      'GoRouter',
+      'Firebase Cloud Messaging',
+      'Local Notifications',
+      'Dio',
+      'Flutter l10n',
+    ],
     media: [
       {
         kind: 'image',
-        src: '/projects/travel-hero.webp',
-        alt: 'Frame from the Aspen travel UI design: a full-bleed mountain photograph over the words Plan your Luxurious Vacation and an Explore button',
-        caption: 'Design spec — onboarding',
+        src: '/projects/rahala-onboarding.webp',
+        alt: 'Rahala onboarding screen with a photograph of Oia in Santorini, the heading Discover places that move you, and a language toggle',
+        caption: 'Onboarding',
       },
       {
         kind: 'image',
-        src: '/projects/travel-explore.webp',
-        alt: 'Frame from the Aspen travel UI design: an explore screen with a location selector, a search field, category chips and Popular and Recommended destination rails',
-        caption: 'Design spec — explore',
+        src: '/projects/rahala-signin.webp',
+        alt: 'Rahala sign-in screen in dark mode with email and password fields and a forgot-password link',
+        caption: 'Sign in',
       },
       {
         kind: 'image',
-        src: '/projects/travel-detail.webp',
-        alt: 'Frame from the Aspen travel UI design: a destination detail screen with a hero photograph, rating, description, facilities row, price and a Book Now button',
-        caption: 'Design spec — destination detail',
+        src: '/projects/rahala-signin-ar.webp',
+        alt: 'The same Rahala sign-in screen in Arabic, with the whole layout mirrored right-to-left and the brand shown as رحلة',
+        caption: 'Arabic — RTL',
+      },
+      {
+        kind: 'image',
+        src: '/projects/rahala-signup.webp',
+        alt: 'Rahala create-account screen with name, email and password fields',
+        caption: 'Create account',
       },
     ],
-    note: 'The three frames above are the published Aspen UI design this app implements — the spec, not the running app, and credited to its author below. The app itself needs a Firebase web configuration that is not in the repository, so it could not be run to capture real screens, and nothing has been mocked up to look like one. The screens listed above were read from the app’s own source.',
+    note: 'Screenshots are the real app, built from its own source and run against the live Supabase project. They cover the screens reachable without a session — the catalogue, booking and profile screens sit behind sign-in, so they are described here rather than shown. No money is taken anywhere in the app: bookings are real database records with server-computed prices, and the app says so wherever a price appears. The linked repository still holds the previous version of this project; the rebuild described here has not been pushed yet.',
   },
 
   {

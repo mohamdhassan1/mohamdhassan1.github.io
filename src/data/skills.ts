@@ -1,10 +1,13 @@
 /**
  * Skills.
  *
- * Only entries that are backed by code in the repositories, or by tooling the
- * CV lists. Three things the CV mentions are deliberately absent because no
- * repository contains them: Supabase, GoRouter and Firebase Cloud Messaging.
- * Add them back once the source that uses them is pushed.
+ * Only entries that are backed by code, or by tooling the CV lists.
+ *
+ * Supabase, GoRouter and Firebase Cloud Messaging were absent here for a long
+ * time because no project actually used them. The Rahala rebuild (Sep-Oct
+ * 2026) does: its source was read directly and its Supabase project queried,
+ * so those entries are now earned rather than claimed. The matching caveat in
+ * `projects.ts` records what is and is not verified.
  */
 
 export type SkillGroup = {
@@ -22,7 +25,7 @@ export const skillGroups: SkillGroup[] = [
   },
   {
     title: 'Architecture & State',
-    seenIn: 'VCare, Potter Library, Travel',
+    seenIn: 'VCare, Potter Library, Rahala',
     items: [
       'Clean Architecture',
       'BLoC',
@@ -40,9 +43,18 @@ export const skillGroups: SkillGroup[] = [
     items: ['REST API', 'Dio', 'http', 'JSON serialization', 'Interceptors', 'Error mapping', 'Postman'],
   },
   {
-    title: 'Firebase & Cloud',
-    seenIn: 'Travel, FoodLens',
-    items: ['Firebase Auth', 'Cloud Firestore', 'Firebase Core', 'Google Sign-In', 'Laravel REST backend'],
+    title: 'Backend as a service',
+    seenIn: 'Rahala, FoodLens',
+    items: [
+      'Supabase',
+      'PostgreSQL',
+      'Row-Level Security',
+      'SQL functions & triggers',
+      'Edge Functions (Deno)',
+      'Supabase Storage',
+      'Firebase Cloud Messaging',
+      'Laravel REST backend',
+    ],
   },
   {
     title: 'Data & Storage',
@@ -51,7 +63,7 @@ export const skillGroups: SkillGroup[] = [
   },
   {
     title: 'Auth & Security',
-    seenIn: 'VCare, Travel',
+    seenIn: 'VCare, Rahala',
     items: [
       'JWT',
       'Login / Register / Logout',
@@ -66,9 +78,14 @@ export const skillGroups: SkillGroup[] = [
     items: ['Gemini API', 'Prompt design', 'Streaming-safe timeouts', 'Key injection via dart-define'],
   },
   {
+    title: 'Navigation',
+    seenIn: 'Rahala',
+    items: ['GoRouter', 'Declarative routing', 'Nested tab shells', 'Route guards', 'Deep linking'],
+  },
+  {
     title: 'Localization',
-    seenIn: 'VCare',
-    items: ['Arabic & English', 'RTL layout', 'Flutter l10n', 'ARB files', 'Persisted locale'],
+    seenIn: 'VCare, Rahala',
+    items: ['Arabic & English', 'RTL layout', 'Flutter l10n', 'ARB files', 'Persisted locale', 'Arabic search normalisation'],
   },
   {
     title: 'Testing & Tooling',

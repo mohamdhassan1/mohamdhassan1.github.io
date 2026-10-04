@@ -127,17 +127,17 @@ export const services = [
   {
     title: 'Authentication & sessions',
     body: 'Register, login and logout against your backend, JWT held in encrypted storage, and expired sessions that clear themselves and return the user to sign-in.',
-    backedBy: 'VCare, Travel Booking',
+    backedBy: 'VCare, Rahala',
   },
   {
     title: 'Arabic & English apps',
-    body: 'Full localization through Flutter l10n with ARB files, right-to-left layout, and a language choice that survives a restart.',
-    backedBy: 'VCare',
+    body: 'Full localization through Flutter l10n with ARB files, right-to-left layout, a language choice that survives a restart, and search that normalises Arabic text so it matches however it is typed.',
+    backedBy: 'VCare, Rahala',
   },
   {
-    title: 'Firebase applications',
-    body: 'Firebase Authentication and Cloud Firestore for apps that need accounts and hosted data without you running a server.',
-    backedBy: 'Travel Booking, FoodLens',
+    title: 'Supabase & hosted backends',
+    body: 'A Postgres backend you own — row-level security so each account only sees its own rows, SQL functions for the rules that must not live in the client, and Edge Functions for the work that happens server-side.',
+    backedBy: 'Rahala',
   },
   {
     title: 'Offline & local storage',
