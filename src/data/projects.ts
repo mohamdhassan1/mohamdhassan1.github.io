@@ -399,30 +399,42 @@ export const featuredProjects: Project[] = [
     media: [
       {
         kind: 'image',
-        src: '/projects/rahala-onboarding.webp',
-        alt: 'Rahala onboarding screen with a photograph of Oia in Santorini, the heading Discover places that move you, and a language toggle',
-        caption: 'Onboarding',
+        src: '/projects/rahala-explore.webp',
+        alt: 'Rahala explore screen showing 20 destinations as photo cards with country, starting price and a favourite toggle, above category filter chips and a Featured first sort control',
+        caption: 'Explore & filters',
       },
       {
         kind: 'image',
-        src: '/projects/rahala-signin.webp',
-        alt: 'Rahala sign-in screen in dark mode with email and password fields and a forgot-password link',
-        caption: 'Sign in',
+        src: '/projects/rahala-destination.webp',
+        alt: 'Rahala destination detail for Cairo with a photo header, best time to visit, coordinates, and a live weather panel showing the current temperature and a three-day forecast from Open-Meteo',
+        caption: 'Destination & live weather',
       },
       {
         kind: 'image',
-        src: '/projects/rahala-signin-ar.webp',
-        alt: 'The same Rahala sign-in screen in Arabic, with the whole layout mirrored right-to-left and the brand shown as رحلة',
+        src: '/projects/rahala-book.webp',
+        alt: 'Rahala booking screen for Cairo showing two packages with per-person prices and durations, a travel date picker, a traveller counter and contact fields',
+        caption: 'Booking flow',
+      },
+      {
+        kind: 'image',
+        src: '/projects/rahala-favourites.webp',
+        alt: 'Rahala favourites screen showing a saved destination card for Sharm El Sheikh with its photo, description, starting price and trip length',
+        caption: 'Saved destinations',
+      },
+      {
+        kind: 'image',
+        src: '/projects/rahala-notifications.webp',
+        alt: 'Rahala notification centre listing a booking confirmed and a booking cancelled entry, each with the destination, travel date, booking reference and timestamp',
+        caption: 'Notification centre',
+      },
+      {
+        kind: 'image',
+        src: '/projects/rahala-explore-ar.webp',
+        alt: 'The Rahala explore screen in Arabic, fully translated and mirrored right-to-left, with the destination grid, filter chips and bottom navigation all reversed',
         caption: 'Arabic — RTL',
       },
-      {
-        kind: 'image',
-        src: '/projects/rahala-signup.webp',
-        alt: 'Rahala create-account screen with name, email and password fields',
-        caption: 'Create account',
-      },
     ],
-    note: 'Screenshots are the real app, built from its own source and run against the live Supabase project. They cover the screens reachable without a session — the catalogue, booking and profile screens sit behind sign-in, so they are described here rather than shown. No money is taken anywhere in the app: bookings are real database records with server-computed prices, and the app says so wherever a price appears. The linked repository still holds the previous version of this project; the rebuild described here has not been pushed yet.',
+    note: 'Every frame is the signed-in app, built from its own source and running against the live Supabase project — real catalogue rows, a real saved destination, real booking references, and weather fetched from Open-Meteo at capture time. The profile and home screens are deliberately not shown: they carry an account photo and email address. No money is taken anywhere in the app — bookings are real database records with server-computed prices, and the app says so wherever a price appears. The linked repository still holds the previous version of this project; the rebuild described here has not been pushed yet.',
   },
 
   {
